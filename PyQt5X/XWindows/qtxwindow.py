@@ -41,8 +41,36 @@ class QtXWindow(QMainWindow):
         if style_path:
             self.set_csstyle(css_file=style_path)
 
+    def show(self):
+        """display the window at monitor"""
+        super().show()
+        QtXWindow.app.exec_()
+
+    def __enter__(self):
+        """for 'with' context
+
+        @return:
+            window: QtXWindow, itself
+        """
+        self.show()
+        return self
+
+    def __exit__(self, *exc_info):
+        """for 'with' context
+
+        @parm:
+            exc_info: type, value, traceback
+        """
+        return exc_info
+
     def set_csstyle(self, css_file=None, style_dict=None):
-        """set style with css"""
+        """set style with css
+        
+        @parm:
+            css_file: str, path to css style file
+                * filename extension is must be '.css'
+            style_dict: dict, css styles
+        """
         if not (css_file or style_dict):
             raise ParmEmptyError('css_file or style_dict is required') 
         if css_file:
