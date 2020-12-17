@@ -22,6 +22,18 @@ Examples using extended widgets.
 
 ## How to Use
 
+### PyQt5X
+
+```shell
+
+```
+
+### Test
+
+```shell
+$> python test
+```
+
 ## Design
 
 ## File Structure
@@ -29,5 +41,7 @@ Examples using extended widgets.
 ```
 PyQt5X
 | __init__.py
-| __main__.py
+L Xamples
+L XWidgets
+L XWindows
 ```
