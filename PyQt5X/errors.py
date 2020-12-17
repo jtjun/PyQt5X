@@ -12,3 +12,6 @@ class ParmEmptyError(ParmError):
 
 class ParmTypeError(ParmError):
     """Invalid type of parameter has passed"""
+
+class ResourceError(Error):
+    """Error about Resources such as FileNotFoundError"""

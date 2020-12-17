@@ -65,20 +65,27 @@ class QtXWindow(QMainWindow):
 
     def set_csstyle(self, css_file=None, style_dict=None):
         """set style with css
-        
+
         @parm:
             css_file: str, path to css style file
                 * filename extension is must be '.css'
             style_dict: dict, css styles
         """
-        if not (css_file or style_dict):
-            raise ParmEmptyError('css_file or style_dict is required') 
-        if css_file:
-            with open(css_file, 'r', encoding='utf-8') as style:
-                self.setStyleSheet(style)
-        if style_dict:
-            # TODO: parse dict and apply style
-            pass
+        try: # Prevents program termination due to styling.
+            if not (css_file or style_dict):
+                raise ParmEmptyError('css_file or style_dict is required')
+            if css_file:
+                try:
+                    with open(css_file, 'r', encoding='utf-8') as style:
+                        self.setStyleSheet(style.read())
+                except FileNotFoundError:
+                    raise ResourceError("No Style File: " + css_file)
+            if style_dict:
+                # TODO: parse dict and apply style
+                pass
+
+        except Error as err:
+            print('Can not apply style\n', err)
 
     def set_translucent_background(self):
         """Set the background transparent"""
