@@ -13,6 +13,10 @@ from PyQt5X.errors import *
 class QtXWindow(QMainWindow):
     """Extended QMainWindow
 
+    @cls_attr:
+        _name_idx: int, name index
+        app: QApplication, to disaply QtWidget
+
     @parm:
         title: str, title of window
         icon_path: str, path to icon of window
@@ -25,6 +29,7 @@ class QtXWindow(QMainWindow):
     """
     _name_idx = 0
     app = QApplication([])
+
     def __init__(self, title, icon_path=None, width=None, height=None, resizable=True, style_path=None):
         super().__init__()
         self.setWindowTitle(title)
@@ -42,7 +47,7 @@ class QtXWindow(QMainWindow):
         # style
         if style_path:
             self.set_csstyle(css_file=style_path)
-        # name index
+        # name
         self.setObjectName((title or 'QtXWindow_') + str(QtXWindow._name_idx))
 
     def show(self):
@@ -63,7 +68,8 @@ class QtXWindow(QMainWindow):
         """for 'with' context
 
         @parm:
-            exc_info: type, value, traceback
+            exc_info: tuple(type, value, traceback),
+                      exception info
         """
         return exc_info
 
@@ -105,3 +111,4 @@ class QtXWindow(QMainWindow):
         """
         QtXWindow._name_idx += 1
         return f'{ui_obj.__class__.__name__}_{QtXWindow._name_idx}'
+    
