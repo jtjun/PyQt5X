@@ -32,7 +32,7 @@ class QtXWindow(QMainWindow):
     _font_ids = list()
     app = QApplication([])
 
-    def __init__(self, title, icon_path=None, width=None, height=None, resizable=True, style_path=None):
+    def __init__(self, title, icon_path=None, *, width=None, height=None, resizable=True, style_path=None):
         super().__init__()
         self.setWindowTitle(title)
         self.setAutoFillBackground(True)
@@ -124,24 +124,24 @@ class QtXWindow(QMainWindow):
             QFontDatabase.addApplicationFont(font_path))
 
     @staticmethod
-    def gen_font(font, size, *, bold):
+    def gen_font(font_family, size, *, bold):
         """generate font
 
         @parm:
-            font: str, font-family
+            font_family: str, font-family
             size: int, pixel size of font
             bold: bool, bold or not
         @return:
-            qfont: QFont
+            font: QFont
         """
-        qfont = QFont()
-        if font:
-            qfont.setFamily(font)
-        qfont.setPixelSize(size or 12)
-        qfont.setBold(bold)
-        return qfont
+        font = QFont()
+        if font_family:
+            font.setFamily(font_family)
+        font.setPixelSize(size or 12)
+        font.setBold(bold)
+        return font
 
-    def init_ui_obj(self, ui_obj, name, x, y, width, height, font, font_size, bold, font_color, *, func=None, transparent=False, align=None):
+    def init_ui_obj(self, ui_obj, name, x, y, width, height, font_family, font_size, bold, font_color, *, func=None, transparent=False, align=None):
         """initialize ui object
 
         @parm:
@@ -151,7 +151,7 @@ class QtXWindow(QMainWindow):
             y: int, y-positin
             width: int, width
             height: int, height
-            font: str, font-family of content
+            font_family: str, font-family of content
             font_size: int, size of point (px)
             bold: bool(False), bold text or not
             font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
@@ -162,10 +162,10 @@ class QtXWindow(QMainWindow):
             ui_obj: QtWidget, ui object
         """
         ui_obj.move(x, y)
-        ui_obj.setObjectName(name or self.__get_next_name(ui_obj) )
+        ui_obj.setObjectName(name or self.__get_next_name(ui_obj))
         if width and height:
             ui_obj.setFixedSize(width, height)
-        ui_obj.setFont(self.gen_font(font, font_size, bold=bold))
+        ui_obj.setFont(self.gen_font(font_family, font_size, bold=bold))
         if font_color:
             ui_obj.setStyleSheet(f'color: {font_color}')
         if func:
@@ -176,7 +176,7 @@ class QtXWindow(QMainWindow):
             align_flag = {
                 'LEFT': Qt.AlignLeft,
                 'RIGHT': Qt.AlignRight
-            }.get(align.upper(), Qt.AlignVCenter)
+            }.get(align.upper(), Qt.AlignCenter)
             ui_obj.setAlignment(align_flag|Qt.AlignVCenter)
         return ui_obj
 
@@ -194,7 +194,7 @@ class QtXWindow(QMainWindow):
         return ui_obj
 
 
-    def gen_label(self, text, name=None, *, align='center', x=0, y=0, width=0, height=0, font=None, font_size=0, bold=False, font_color=None):
+    def gen_label(self, text, name=None, *, align='center', x=0, y=0, width=0, height=0, font_family=None, font_size=0, bold=False, font_color=None, transparent=False):
         """generate label at (x, y) size (width, height) with text
 
         @parm:
@@ -205,10 +205,10 @@ class QtXWindow(QMainWindow):
             y: int, y-positin
             width: int, width
             height: int, height
-            font: str, font-family of content
+            font_family: str, font-family of content
             font_size: int, size of point (px)
             bold: bool(False), bold text or not
             font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
         """
         lbl = QLabel(text, self)
-        return self._init_ui_obj(lbl, name, x, y, width, height, font, font_size, bold, font_color, transparent=True, align=align)
+        return self.init_ui_obj(lbl, name, x, y, width, height, font_family, font_size, bold, font_color, transparent=transparent, align=align)
