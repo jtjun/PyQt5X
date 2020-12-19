@@ -15,6 +15,7 @@ class QtXWindow(QMainWindow):
 
     @cls_attr:
         _name_idx: int, name index
+        _font_ids: list[QFontId], list of font id
         app: QApplication, to disaply QtWidget
 
     @parm:
@@ -28,6 +29,7 @@ class QtXWindow(QMainWindow):
         resizable: bool, fixed size or not, initially resizable (True)
     """
     _name_idx = 0
+    _font_ids = list()
     app = QApplication([])
 
     def __init__(self, title, icon_path=None, width=None, height=None, resizable=True, style_path=None):
@@ -122,7 +124,7 @@ class QtXWindow(QMainWindow):
             QFontDatabase.addApplicationFont(font_path))
 
     @staticmethod
-    def gen_font(font, size, bold):
+    def gen_font(font, size, *, bold):
         """generate font
 
         @parm:
@@ -130,11 +132,11 @@ class QtXWindow(QMainWindow):
             size: int, pixel size of font
             bold: bool, bold or not
         @return:
-            font: QFont
+            qfont: QFont
         """
-        font = QFont()
+        qfont = QFont()
         if font:
-            font.setFamily(font)
-        font.setPixelSize(size or 12)
-        font.setBold(bold)
-        return font
+            qfont.setFamily(font)
+        qfont.setPixelSize(size or 12)
+        qfont.setBold(bold)
+        return qfont
