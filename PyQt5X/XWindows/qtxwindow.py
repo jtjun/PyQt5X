@@ -9,6 +9,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5X.errors import *
 
+
 class QtXWindow(QMainWindow):
     """Extended QMainWindow
 
@@ -22,6 +23,7 @@ class QtXWindow(QMainWindow):
         height: int, height of window
         resizable: bool, fixed size or not, initially resizable (True)
     """
+    _name_idx = 0
     app = QApplication([])
     def __init__(self, title, icon_path=None, width=None, height=None, resizable=True, style_path=None):
         super().__init__()
@@ -40,6 +42,8 @@ class QtXWindow(QMainWindow):
         # style
         if style_path:
             self.set_csstyle(css_file=style_path)
+        # name index
+        self.setObjectName((title or 'QtXWindow_') + str(QtXWindow._name_idx))
 
     def show(self):
         """display the window at monitor"""
@@ -90,3 +94,14 @@ class QtXWindow(QMainWindow):
     def set_translucent_background(self):
         """Set the background transparent"""
         self.setAttribute(Qt.WA_TranslucentBackground)
+
+    def __get_next_name(self, ui_obj):
+        """identical name
+
+        @parm:
+            ui_obj: QtWidget, ui object
+        @return:
+            name: str, {obj_cls}_{name_idx}
+        """
+        QtXWindow._name_idx += 1
+        return f'{ui_obj.__class__.__name__}_{QtXWindow._name_idx}'
