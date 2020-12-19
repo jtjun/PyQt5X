@@ -4,6 +4,7 @@ Inherits QtXWindow class and
 implements set_ui method
 using self.gen_{WIDGET_NAME}
 """
+from traceback import print_exception
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton
@@ -59,20 +60,27 @@ class QtXWindow(QMainWindow):
 
     def __enter__(self):
         """for 'with' context
+        set the ui_objects in the 'with' context,
+        when exit the context, show the itself
 
         @return:
             window: QtXWindow, itself
         """
-        self.show()
         return self
 
     def __exit__(self, *exc_info):
         """for 'with' context
+        call the show() to display itself.
+        If exception is raised when set the ui (in the 'with' context),
+        print traceback at console.
 
         @parm:
             exc_info: tuple(type, value, traceback),
                       exception info
         """
+        self.show()
+        if exc_info[0]:
+            print_exception(*exc_info)
         return exc_info
 
     def set_csstyle(self, css_file=None, style_dict=None):
@@ -222,7 +230,7 @@ class QtXWindow(QMainWindow):
         lbl = QLabel(text, self)
         return self.init_ui_obj(lbl, name, x, y, width, height, font_family, font_size, bold, font_color, backgrond=background, align=align)
 
-    def gen_btn(self, text, name=None, func=None, *, align='center', x=0, y=0, width=0, height=0, font_family=None, font_size=0, bold=False, font_color=None, background=None):
+    def gen_btn(self, text, name=None, func=None, *, x=0, y=0, width=0, height=0, font_family=None, font_size=0, bold=False, font_color=None, background=None):
         """generate button at (x, y) size (width, height) with text,
         when click the button 'func' is called.
 
@@ -230,7 +238,6 @@ class QtXWindow(QMainWindow):
             text: str, label's content
             name: str, name of label
             func: function, button click event handler
-            align: str, [center, left, right] text alignment
             x: int, x-position
             y: int, y-positin
             width: int, width
@@ -242,4 +249,4 @@ class QtXWindow(QMainWindow):
             background: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
         """
         btn = QPushButton(text, self)
-        return self.init_ui_obj(btn, name, x, y, width, height, font_family, font_size, bold, font_color, func=func, backgrond=background, align=align)
+        return self.init_ui_obj(btn, name, x, y, width, height, font_family, font_size, bold, font_color, func=func, backgrond=background)
