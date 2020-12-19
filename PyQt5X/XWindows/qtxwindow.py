@@ -140,3 +140,48 @@ class QtXWindow(QMainWindow):
         qfont.setPixelSize(size or 12)
         qfont.setBold(bold)
         return qfont
+
+    def init_ui_obj(self, ui_obj, name, x, y, width, height, font, font_size, bold, font_color, *, func=None, transparent=False):
+        """initialize ui object
+
+        @parm:
+            ui_obj: QtWidget, ui object
+            name: str, name of ui object
+            x: int, x-position
+            y: int, y-positin
+            width: int, width
+            height: int, height
+            font: str, font-family of content
+            font_size: int, size of point (px)
+            bold: bool(False), bold text or not
+            font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
+            func: function, connected function
+            transparent: bool(False), transparent background or not
+        @return:
+            ui_obj: QtWidget, ui object
+        """
+        ui_obj.move(x, y)
+        ui_obj.setObjectName(name or self.__get_next_name(ui_obj) )
+        if width and height:
+            ui_obj.setFixedSize(width, height)
+        ui_obj.setFont(self.gen_font(font, font_size, bold=bold))
+        if font_color:
+            ui_obj.setStyleSheet(f'color: {font_color}')
+        if func:
+            QtXWindow.connect_func(ui_obj, func)
+        if transparent:
+            ui_obj.setStyleSheet('background: rgba(0,0,0,0)')
+        return ui_obj
+
+    @staticmethod
+    def connect_func(ui_obj, func):
+        """connect ui object and function
+
+        @parm:
+            ui_obj: QtWidget, ui object
+            func: function, event handler
+        @return:
+            ui_obj: QtWidget, ui object
+        """
+        # TODO: check class of ui_obj and connect func
+        return ui_obj
