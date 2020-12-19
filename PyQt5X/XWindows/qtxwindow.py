@@ -5,7 +5,7 @@ implements set_ui method
 using self.gen_{WIDGET_NAME}
 """
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5X.errors import *
 
@@ -111,4 +111,30 @@ class QtXWindow(QMainWindow):
         """
         QtXWindow._name_idx += 1
         return f'{ui_obj.__class__.__name__}_{QtXWindow._name_idx}'
-    
+
+    def regist_font_family(self, font_path):
+        """Regist the font family
+
+        @parm:
+            font_path: str, path of font file such as '.ttf'
+        """
+        QtXWindow._font_ids.append(
+            QFontDatabase.addApplicationFont(font_path))
+
+    @staticmethod
+    def gen_font(font, size, bold):
+        """generate font
+
+        @parm:
+            font: str, font-family
+            size: int, pixel size of font
+            bold: bool, bold or not
+        @return:
+            font: QFont
+        """
+        font = QFont()
+        if font:
+            font.setFamily(font)
+        font.setPixelSize(size or 12)
+        font.setBold(bold)
+        return font
