@@ -7,4 +7,4 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 __all__ = ['DATA_PATH']
 
-DATA_PATH = 'test\\data\\'
+DATA_PATH = 'xtest\\data\\'

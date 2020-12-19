@@ -31,7 +31,7 @@ Examples using extended widgets.
 ### Test
 
 ```shell
-$> python test
+$> python xtest
 ```
 
 ## Design
