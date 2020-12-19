@@ -6,7 +6,7 @@ using self.gen_{WIDGET_NAME}
 """
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton
 from PyQt5X.errors import *
 
 
@@ -26,7 +26,7 @@ class QtXWindow(QMainWindow):
             * filename extension is must be '.css'
         width: int, width of window
         height: int, height of window
-        resizable: bool, fixed size or not, initially resizable (True)
+        resizable: bool(True), fixed size or not, initially resizable
     """
     _name_idx = 0
     _font_ids = list()
@@ -141,7 +141,7 @@ class QtXWindow(QMainWindow):
         font.setBold(bold)
         return font
 
-    def init_ui_obj(self, ui_obj, name, x, y, width, height, font_family, font_size, bold, font_color, *, func=None, transparent=False, align=None):
+    def init_ui_obj(self, ui_obj, name, x, y, width, height, font_family, font_size, bold, font_color, *, func=None, backgrond=None, align=None):
         """initialize ui object
 
         @parm:
@@ -156,7 +156,7 @@ class QtXWindow(QMainWindow):
             bold: bool(False), bold text or not
             font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
             func: function, connected function
-            transparent: bool(False), transparent background or not
+            backgrond: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
             align: str, [center, left, right] text alignment
         @return:
             ui_obj: QtWidget, ui object
@@ -170,8 +170,8 @@ class QtXWindow(QMainWindow):
             ui_obj.setStyleSheet(f'color: {font_color}')
         if func:
             QtXWindow.connect_func(ui_obj, func)
-        if transparent:
-            ui_obj.setStyleSheet('background: rgba(0,0,0,0)')
+        if backgrond:
+            ui_obj.setStyleSheet(f'background: {backgrond}')
         if align:
             align_flag = {
                 'LEFT': Qt.AlignLeft,
@@ -188,10 +188,17 @@ class QtXWindow(QMainWindow):
             ui_obj: QtWidget, ui object
             func: function, event handler
         @return:
-            ui_obj: QtWidget, ui object
+            success: bool, True if connection is successful.
         """
         # TODO: check class of ui_obj and connect func
-        return ui_obj
+        try:
+            if isinstance(ui_obj, QPushButton):
+                ui_obj.clicked.connect(func)
+            else:
+                raise ParmTypeError('Can not connect function to {ui_obj.__class__.__name__}')
+        except:
+            return False
+        return True
 
 
     def gen_label(self, text, name=None, *, align='center', x=0, y=0, width=0, height=0, font_family=None, font_size=0, bold=False, font_color=None, transparent=False):
@@ -209,6 +216,30 @@ class QtXWindow(QMainWindow):
             font_size: int, size of point (px)
             bold: bool(False), bold text or not
             font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
+            transparent: bool(False), transparent background or not
         """
+        background = 'rgba(0,0,0)' if transparent else None
         lbl = QLabel(text, self)
-        return self.init_ui_obj(lbl, name, x, y, width, height, font_family, font_size, bold, font_color, transparent=transparent, align=align)
+        return self.init_ui_obj(lbl, name, x, y, width, height, font_family, font_size, bold, font_color, backgrond=background, align=align)
+
+    def gen_btn(self, text, name=None, func=None, *, align='center', x=0, y=0, width=0, height=0, font_family=None, font_size=0, bold=False, font_color=None, background=None):
+        """generate button at (x, y) size (width, height) with text,
+        when click the button 'func' is called.
+
+        @parm:
+            text: str, label's content
+            name: str, name of label
+            func: function, button click event handler
+            align: str, [center, left, right] text alignment
+            x: int, x-position
+            y: int, y-positin
+            width: int, width
+            height: int, height
+            font_family: str, font-family of content
+            font_size: int, size of point (px)
+            bold: bool(False), bold text or not
+            font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
+            background: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
+        """
+        btn = QPushButton(text, self)
+        return self.init_ui_obj(btn, name, x, y, width, height, font_family, font_size, bold, font_color, func=func, backgrond=background, align=align)
