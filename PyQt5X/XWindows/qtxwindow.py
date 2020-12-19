@@ -6,7 +6,7 @@ using self.gen_{WIDGET_NAME}
 """
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
 from PyQt5X.errors import *
 
 
@@ -141,7 +141,7 @@ class QtXWindow(QMainWindow):
         qfont.setBold(bold)
         return qfont
 
-    def init_ui_obj(self, ui_obj, name, x, y, width, height, font, font_size, bold, font_color, *, func=None, transparent=False):
+    def init_ui_obj(self, ui_obj, name, x, y, width, height, font, font_size, bold, font_color, *, func=None, transparent=False, align=None):
         """initialize ui object
 
         @parm:
@@ -157,6 +157,7 @@ class QtXWindow(QMainWindow):
             font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
             func: function, connected function
             transparent: bool(False), transparent background or not
+            align: str, [center, left, right] text alignment
         @return:
             ui_obj: QtWidget, ui object
         """
@@ -171,6 +172,12 @@ class QtXWindow(QMainWindow):
             QtXWindow.connect_func(ui_obj, func)
         if transparent:
             ui_obj.setStyleSheet('background: rgba(0,0,0,0)')
+        if align:
+            align_flag = {
+                'LEFT': Qt.AlignLeft,
+                'RIGHT': Qt.AlignRight
+            }.get(align.upper(), Qt.AlignVCenter)
+            ui_obj.setAlignment(align_flag|Qt.AlignVCenter)
         return ui_obj
 
     @staticmethod
@@ -185,3 +192,23 @@ class QtXWindow(QMainWindow):
         """
         # TODO: check class of ui_obj and connect func
         return ui_obj
+
+
+    def gen_label(self, text, name=None, *, align='center', x=0, y=0, width=0, height=0, font=None, font_size=0, bold=False, font_color=None):
+        """generate label at (x, y) size (width, height) with text
+
+        @parm:
+            text: str, label's content
+            name: str, name of label
+            align: str, [center, left, right] text alignment
+            x: int, x-position
+            y: int, y-positin
+            width: int, width
+            height: int, height
+            font: str, font-family of content
+            font_size: int, size of point (px)
+            bold: bool(False), bold text or not
+            font_color: str, #RRGGBB rgb(r, g, b) rgba(r, g, b, opacity)
+        """
+        lbl = QLabel(text, self)
+        return self._init_ui_obj(lbl, name, x, y, width, height, font, font_size, bold, font_color, transparent=True, align=align)
